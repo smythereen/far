@@ -150,6 +150,50 @@ gcc -o lastword lastword.c -I$HOME/cmn -L$HOME/lib -lfar -lsys
 
 Release tag: `v0.2.0` (documentation update; version number unchanged).
 
+## Using this unit from C++
+
+This unit can be used from **C and C++**. Keep the unit's `.c` implementation
+files compiled as C with `gcc`/`CC`; compile your C++ client with `g++`/`CXX`
+and use `g++` for the final mixed-language link. There is no need to rebuild
+the C library as C++.
+
+Base's shared rules recognize C++ product sources named `.cc` and compile
+them with `CXX` and `CXXFLAGS` (for example `make CXX=g++`). `CPP` names
+the preprocessor, not the C++ compiler. The commands below assume the
+headers and libraries have already been installed into `$HOME/cmn` and
+`$HOME/lib`. GNU C++17 on Linux x86-64 is the example target; GNU extensions
+in the shared types/headers are intentional.
+
+`far.h` and its nested `common.h` already guard their declarations with
+`extern "C"`; include the public header directly, not `farlocal.h`.
+Many APIs retain `char *` parameters, so pass writable arrays for paths,
+buffers and format strings instead of C++ string literals. `std::string`
+objects are not C strings or FAR records; manage their storage/lifetime in
+your client and respect each function's mutation contract. The header's
+legacy inline tracing calls can emit string-literal-to-`char *` warnings;
+base currently uses `-Wno-write-strings` in `CXXFLAGS` for this legacy API.
+
+Save as `use_far.cc`:
+
+```cpp
+#include <far.h>
+int main() {
+    char text[] = "# comment";
+    return Is_Comment(text) ? 0 : 1;
+}
+```
+
+```sh
+g++ -std=gnu++17 -I"$HOME/cmn" use_far.cc -L"$HOME/lib" -lfar -lsys -o use_far
+./use_far
+```
+
+The C++ example above was compiled, linked and run on Linux x86-64 using
+Clang 22.1.8 via `zig c++ -std=gnu++17 -nostdlib++`, with GCC 14.2-built C
+objects where needed. It uses no C++ standard-library runtime. The `g++`
+command is the GNU-toolchain form; that driver was not available for this
+smoke check. This is not an exhaustive API or concurrency test.
+
 ## License
 
 The original files are offered under `Apache-2.0 OR GPL-2.0-or-later`;
