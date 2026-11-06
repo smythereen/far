@@ -1,0 +1,4 @@
+# UNIT.deps for far
+# Evidence: #include <common.h>; LIBRARIES := -lsys; libfar undefined SysPrt.
+base 1
+require sys
