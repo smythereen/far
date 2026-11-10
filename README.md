@@ -5,7 +5,8 @@ directory walks, and simple TCP/UDP helpers, built on `sys`.
 
 **Requires the [base](https://github.com/smythereen/base) repository** to be
 installed first (project root with `BASE`, `rules.mak`, `targets.mak`, and the
-`repo` unit). Clone base, then fetch this unit with `repo add far` or via the
+`repo` unit). The base unit make system handles C, C++, and Rust, including
+large mixed-language projects. Clone base, then fetch this unit with `repo add far` or via the
 project starter list.
 
 ## What it provides
